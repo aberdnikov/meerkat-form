@@ -1,0 +1,163 @@
+<form{{ form.attributes|raw }}>
+{% if form.hidden %}
+    {% for element in form.hidden %}{{ element|raw }}
+    {% endfor %}
+{% endif %}
+{{ _self.meerkat_container(form.elements) }}
+</form>
+
+{# =============================================================================
+ПРОХОД ПРО ГРУППЕ ПОЛЕЙ
+============================================================================= #}
+{% macro meerkat_container(elements, ingroup) %}
+    {% for element in elements %}
+        {% if 'checkbox' == element.type %}
+            {% if ingroup %}
+                {{ _self.meerkat_checkbox_ingroup(element, loop.first, loop.last) }}
+            {% else %}
+                {{ _self.meerkat_checkbox(element) }}
+            {% endif %}
+        {% elseif 'radio' == element.type %}
+                {{ _self.meerkat_radio_ingroup(element) }}
+        {% elseif 'group' == element.type %}
+            {{ _self.meerkat_group(element) }}
+        {% else %}
+            {% if ingroup %}
+                {{ _self.meerkat_element_ingroup(element) }}
+            {% else %}
+                {{ _self.meerkat_element(element) }}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{# =============================================================================
+    HTML ЭЛЕМЕНТА С ПРЕПЕНДАМИ И АППЕНДАМИ
+============================================================================= #}
+{% macro meerkat_element_html_addon(element) %}
+<div class="input-group">
+    {% if element.prepend %}
+        <span class="input-group-addon">{{ element.prepend|raw }}</span>
+    {% endif %}
+    {{ element.html|raw }}
+    {% if element.append %}
+        <span class="input-group-addon">{{ element.append|raw }}</span>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{# =============================================================================
+    МЕТКА, ОПИСАНИЕ, ПРИМЕР ЗАПОЛНЕНИЯ
+============================================================================= #}
+{% macro meerkat_element_label(element, class) %}
+    {% if element.label %}
+        <label{% if class %} class="{{ class }}"{%endif%} for="{{ element.id }}">{% if element.required %}<span class="required">*</span>{% endif %} {{ element.label }}</label>
+    {% endif %}
+{% endmacro %}
+
+{% macro meerkat_element_error(element) %}
+    <div class="popover fade top in"><div class="arrow"></div><h3 class="popover-title" style="display: none;"></h3><div class="popover-content frm-error" rel="{{ element.id }}">123{{ element.error }}</div></div>
+{% endmacro %}
+
+{# =============================================================================
+    ЭЛЕМЕНТ В ГРУППЕ
+============================================================================= #}
+{% macro meerkat_element_ingroup(element, offset) %}
+    {% set wrap_class = 'frm-group-element' %}
+    {% if element.wrap_class %}
+        {% set wrap_class = wrap_class~ ' '~element.wrap_class %}
+    {% endif %}
+    {% if element.error %}
+        {% set wrap_class = wrap_class~ ' has-error' %}
+    {% endif %}
+<div class=" {{ wrap_class }}">
+    {% if element.prepend or element.append  %}
+        {{ _self.meerkat_element_html_addon(element) }}
+    {% else %}
+        {{ element.html|raw }}
+    {% endif %}
+    {{ _self.meerkat_element_error(element) }}
+</div>
+{% endmacro %}
+
+{# =============================================================================
+    ЭЛЕМЕНТ
+============================================================================= #}
+{% macro meerkat_element(element) %}
+<div class="form-group{% if element.error %} has-error{% endif %}">
+    {% if element.prepend or element.append  %}
+        {{ _self.meerkat_element_html_addon(element) }}
+    {% else %}
+        {{ element.html|raw }}
+    {% endif %}
+    {{ _self.meerkat_element_error(element) }}
+</div>
+{% endmacro %}
+
+{# =============================================================================
+    ГРУППА
+============================================================================= #}
+{% macro meerkat_group(element) %}
+    {% if element.label %}
+        <div class="form-group">
+            <label>{% if element.required %}<span class="frm-required">*</span>{% endif %} {{ element.label }}</label>
+        </div>
+    {% endif %}
+    {{ _self.meerkat_container(element.elements, true) }}
+{% endmacro %}
+
+{# =============================================================================
+    CHECKBOX
+============================================================================= #}
+{% macro meerkat_checkbox(element) %}
+    <div class="form-group{% if element.error %} has-error{% endif %}">
+        <div class="checkbox">
+            <label>
+                {{ element.html|raw }}
+                {% if element.required %}<span class="required">*</span>{% endif %} {{ element.label|raw }}
+            </label>
+            {{ _self.meerkat_element_error(element) }}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro meerkat_checkbox_ingroup(element, first, last) %}
+    {% if element.is_inline %}
+        <label class="checkbox-inline {{ element.wrap_class }}">
+        {{ element.html|raw }}
+        {% if element.required %}<span class="required">*</span>{% endif %} {{ element.label|raw }}
+        {{ _self.meerkat_element_error(element) }}
+        </label>
+        {% else %}
+        <div class="checkbox">
+            <label>
+            {{ element.html|raw }}
+            {% if element.required %}<span class="required">*</span>{% endif %} {{ element.label|raw }}
+            {{ _self.meerkat_element_error(element) }}
+            </label>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+
+{# =============================================================================
+    RADIO
+============================================================================= #}
+{% macro meerkat_radio_ingroup(element, first, last) %}
+<div class="form-group">
+    {% if element.is_inline %}
+        <label class="radio-inline">
+            {{ element.html|raw }}
+            {% if element.required %}<span class="required">*</span>{% endif %} {{ element.label|raw }}
+            {{ _self.meerkat_element_error(element) }}
+        </label>
+    {% else %}
+        <div class="radio">
+            <label>
+                {{ element.html|raw }}
+                {% if element.required %}<span class="required">*</span>{% endif %} {{ element.label|raw }}
+            </label>
+        </div>
+    {% endif %}
+</div>
+{% endmacro %}

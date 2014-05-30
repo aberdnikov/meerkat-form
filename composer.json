@@ -26,6 +26,7 @@
 	"require": {
 			"php": ">=5.3",
 			"meerkat/meerkat-staticfiles": "*",
+			"meerkat/meerkat-twig": "*",
 			"meerkat/meerkat-event": "*",
 			"composer/installers": "*"
 	},
