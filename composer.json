@@ -16,12 +16,12 @@
                         "homepage": "http://pear.php.net/user/mansion",
                         "role": "Lead Developer"
                 }, 
-				{
-					"name": "Alexey Berdnikov",
-					"email": "aberdnikov@gmail.com",
-					"homepage": "https://github.com/aberdnikov",
-					"role": "Module maintainer"
-			}
+		{
+			"name": "Alexey Berdnikov",
+			"email": "aberdnikov@gmail.com",
+			"homepage": "https://github.com/aberdnikov",
+			"role": "Module maintainer"
+		}
 	],
 	"require": {
 			"php": ">=5.3",
